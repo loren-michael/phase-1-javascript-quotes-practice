@@ -5,15 +5,7 @@
 
 // Each quote should have the following structure:
 
-/* <li class='quote-card'>
-<blockquote class="blockquote">
-  <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-  <footer class="blockquote-footer">Someone famous</footer>
-  <br>
-  <button class='btn-success'>Likes: <span>0</span></button>
-  <button class='btn-danger'>Delete</button>
-</blockquote>
-</li> */
+
 
 // Submitting the form creates a new quote and adds it to the list of quotes without having to refresh the page. Pessimistic rendering is recommended.
 
@@ -35,9 +27,24 @@
 
 
 
+        // Assignments
+const baseURL = `http://localhost:3000`
+const baseURLEmbedLikes = `http://localhost:3000/quotes?_embed=likes`
+
+
+
+// DOMContentLoaded beginning
+
 document.addEventListener("DOMContentLoaded", () => {
 
 
+// Fetches
+
+function getAllQuotes() {
+    return fetch(baseURLEmbedLikes)
+    .then(resp => resp.json())
+    .then(quotesArr => renderAllQuotes(quotesArr))
+}
 
 
 
@@ -45,6 +52,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+// Rendering
+
+function renderAllQuotes (quotesArr) {
+    quotesArr.forEach(renderOneQuote)
+}
+
+function renderOneQuote (quoteObj) {
+    const quoteList = document.querySelector("#quote-list")
+    const quoteCard = document.createElement("li");
+    quoteCard.dataset.id = quoteObj.id;
+    quoteCard.classList = "quote-card";
+    quoteCard.innerHTML = `
+        <blockquote class="blockquote">
+        <p class="mb-0">${quoteObj.quote}</p>
+        <footer class="blockquote-footer">${quoteObj.author}</footer>
+        <br>
+        <button class="btn-success">Likes: <span>0</span></button>
+        <button class="btn-danger">Delete</button>
+        </blockquote>
+    `
+
+    console.log(quoteCard)
+    quoteList.append(quoteCard)
+
+}
+
+
+/* <li class='quote-card'>
+<blockquote class="blockquote">
+<p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+<footer class="blockquote-footer">Someone famous</footer>
+<br>
+<button class='btn-success'>Likes: <span>0</span></button>
+<button class='btn-danger'>Delete</button>
+</blockquote>
+</li> */
 
 
 
@@ -52,14 +95,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+// Initialize
 
-
-
-
-
-
-
-
+getAllQuotes()
 
 
 }) // end of domcontentloaded
+
+
