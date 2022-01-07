@@ -1,10 +1,6 @@
 // DELIVERABLES
 
-// Populate page with quotes with a GET request to http://localhost:3000/quotes?_embed=likes
-    // The query string in this URL tells json-server to include the likes for a quote in the JSON of the response. You should not use this query string when creating or deleting a quote.
-
-// Each quote should have the following structure:
-
+//✅ Populate page with quotes with a GET request to http://localhost:3000/quotes?_embed=likes
 
 
 // Submitting the form creates a new quote and adds it to the list of quotes without having to refresh the page. Pessimistic rendering is recommended.
@@ -28,9 +24,13 @@
 
 
         // Assignments
-const baseURL = `http://localhost:3000`
-const baseURLEmbedLikes = `http://localhost:3000/quotes?_embed=likes`
+const baseURL = `http://localhost:3000`;
+const baseURLEmbedLikes = `http://localhost:3000/quotes?_embed=likes`;
+const submitBtn = document.getElementsByClassName("btn btn-primary")[0];
+const submitQuote = document.getElementById("new-quote");
+const submitAuthor = document.getElementById("author");
 
+// console.log()
 
 
 // DOMContentLoaded beginning
@@ -46,6 +46,16 @@ function getAllQuotes() {
     .then(quotesArr => renderAllQuotes(quotesArr))
 }
 
+function sendNewQuote(quoteObj) {
+    fetch(baseURL + `/quotes`, {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({quote: quoteObj.quote, author: quoteObj.author})
+    }
+)}
 
 
 
@@ -72,27 +82,32 @@ function renderOneQuote (quoteObj) {
         <button class="btn-danger">Delete</button>
         </blockquote>
     `
-
-    console.log(quoteCard)
+    // console.log(quoteCard)
     quoteList.append(quoteCard)
-
 }
 
 
-/* <li class='quote-card'>
-<blockquote class="blockquote">
-<p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-<footer class="blockquote-footer">Someone famous</footer>
-<br>
-<button class='btn-success'>Likes: <span>0</span></button>
-<button class='btn-danger'>Delete</button>
-</blockquote>
-</li> */
+// Event Listeners
+
+submitBtn.addEventListener('click', submitNewQuote)
 
 
 
 
+// Event Handlers
 
+function submitNewQuote (e) {
+    e.preventDefault();
+
+    const quoteSubmitObj = {
+        "quote": submitQuote.value,
+        "author": submitAuthor.value
+    }
+
+    renderOneQuote(quoteSubmitObj)
+
+    sendNewQuote(quoteSubmitObj)
+}
 
 
 // Initialize
