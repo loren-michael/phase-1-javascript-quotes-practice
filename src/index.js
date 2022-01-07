@@ -3,9 +3,9 @@
 //✅ Populate page with quotes with a GET request to http://localhost:3000/quotes?_embed=likes
 
 
-// Submitting the form creates a new quote and adds it to the list of quotes without having to refresh the page. Pessimistic rendering is recommended.
+//✅ Submitting the form creates a new quote and adds it to the list of quotes without having to refresh the page. Pessimistic rendering is recommended.
 
-// Clicking the delete button should delete the respective quote from the API and remove it from the page without having to refresh.
+//✅ Clicking the delete button should delete the respective quote from the API and remove it from the page without having to refresh.
 
 // Clicking the like button will create a like for this particular quote in the API and update the number of likes displayed on the page without having to refresh.
     // Use a POST request to http://localhost:3000/likes
@@ -29,6 +29,7 @@ const baseURLEmbedLikes = `http://localhost:3000/quotes?_embed=likes`;
 const submitBtn = document.getElementsByClassName("btn btn-primary")[0];
 const submitQuote = document.getElementById("new-quote");
 const submitAuthor = document.getElementById("author");
+
 
 // console.log()
 
@@ -57,8 +58,12 @@ function sendNewQuote(quoteObj) {
     }
 )}
 
-
-
+function deleteQuoteFromApi(quoteId) {
+    fetch(baseURL + `/quotes/${quoteId}`, {
+        method: "DELETE",
+    })
+    .then(getAllQuotes)
+}
 
 
 
@@ -71,19 +76,37 @@ function renderAllQuotes (quotesArr) {
 function renderOneQuote (quoteObj) {
     const quoteList = document.querySelector("#quote-list")
     const quoteCard = document.createElement("li");
-    quoteCard.dataset.id = quoteObj.id;
+    quoteCard.id = quoteObj.id;
     quoteCard.classList = "quote-card";
     quoteCard.innerHTML = `
         <blockquote class="blockquote">
         <p class="mb-0">${quoteObj.quote}</p>
         <footer class="blockquote-footer">${quoteObj.author}</footer>
         <br>
-        <button class="btn-success">Likes: <span>0</span></button>
-        <button class="btn-danger">Delete</button>
         </blockquote>
     `
-    // console.log(quoteCard)
+    let deleteBtn = document.createElement("button")
+    deleteBtn.classList = "btn-danger";
+    deleteBtn.innerText = "Delete";
+    deleteBtn.addEventListener('click', deleteQuote)
+    quoteCard.append(deleteBtn)
+
+
+
+    // <button class="btn-success">Likes: <span>0</span></button>
+    // <button class="btn-danger">Delete</button>
+
+
+    // let likeBtn = document.querySelector(".btn-success")
+    // let deleteBtn = document.querySelector(".btn-danger")
+    
+    // likeBtn.addEventListener('click', addLikeToQuote)
+    // deleteBtn.addEventListener('click', deleteQuote)
+
+
+
     quoteList.append(quoteCard)
+
 }
 
 
@@ -94,20 +117,29 @@ submitBtn.addEventListener('click', submitNewQuote)
 
 
 
+
 // Event Handlers
 
 function submitNewQuote (e) {
     e.preventDefault();
-
     const quoteSubmitObj = {
         "quote": submitQuote.value,
         "author": submitAuthor.value
     }
-
     renderOneQuote(quoteSubmitObj)
-
     sendNewQuote(quoteSubmitObj)
 }
+
+function addLikeToQuote(e) {
+    console.log(e.target)
+}
+
+function deleteQuote(e) {
+    e.target.parentNode.remove();
+    deleteQuoteFromApi(e.target.parentNode.id)
+}
+
+
 
 
 // Initialize
